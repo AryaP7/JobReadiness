@@ -32,7 +32,7 @@ const ProfileUpload = ({ onProfileUpdate }: ProfileUploadProps) => {
       if (!user) throw new Error("Not authenticated");
 
       // @ts-ignore - Types will be generated after migration
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("profiles")
         .update({ github_url: githubUrl })
         .eq("id", user.id);
@@ -89,7 +89,7 @@ const ProfileUpload = ({ onProfileUpdate }: ProfileUploadProps) => {
         .getPublicUrl(filePath);
 
       // @ts-ignore - Types will be generated after migration
-      const { error: updateError } = await supabase
+      const { error: updateError } = await (supabase as any)
         .from("profiles")
         .update({ resume_url: publicUrl })
         .eq("id", user.id);

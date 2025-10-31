@@ -54,7 +54,7 @@ const Dashboard = () => {
     setAnalyzing(true);
     try {
       // @ts-ignore - Types will be generated after migration
-      const { data: role, error: roleError } = await supabase
+      const { data: role, error: roleError } = await (supabase as any)
         .from("job_roles")
         .select("*")
         .eq("id", selectedRoleId)
@@ -74,7 +74,7 @@ const Dashboard = () => {
       const readinessScore = Math.round((simulatedUserSkills.length / allRequiredSkills.length) * 100);
 
       // @ts-ignore - Types will be generated after migration
-      const { data: newAssessment, error: assessmentError } = await supabase
+      const { data: newAssessment, error: assessmentError } = await (supabase as any)
         .from("user_assessments")
         .insert({
           user_id: session.user.id,
@@ -123,7 +123,7 @@ const Dashboard = () => {
 
       if (sampleRecommendations.length > 0) {
         // @ts-ignore - Types will be generated after migration
-        const { data: recs, error: recError } = await supabase
+        const { data: recs, error: recError } = await (supabase as any)
           .from("recommendations")
           .insert(sampleRecommendations)
           .select();

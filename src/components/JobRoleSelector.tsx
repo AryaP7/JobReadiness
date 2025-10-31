@@ -40,7 +40,7 @@ const JobRoleSelector = ({ onRoleSelect, selectedRoleId }: JobRoleSelectorProps)
   const fetchRoles = async () => {
     try {
       // @ts-ignore - Types will be generated after migration
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("job_roles")
         .select("*")
         .order("title");
