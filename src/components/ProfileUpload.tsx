@@ -76,17 +76,16 @@ const ProfileUpload = ({ onProfileUpdate }: ProfileUploadProps) => {
 
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}_resume.${fileExt}`;
-      const filePath = `resumes/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from("resumes")
-        .upload(filePath, file, { upsert: true });
+        .upload(fileName, file, { upsert: true });
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
         .from("resumes")
-        .getPublicUrl(filePath);
+        .getPublicUrl(fileName);
 
       // @ts-ignore - Types will be generated after migration
       const { error: updateError } = await (supabase as any)
@@ -96,10 +95,32 @@ const ProfileUpload = ({ onProfileUpdate }: ProfileUploadProps) => {
 
       if (updateError) throw updateError;
 
+      // Extract text from the uploaded PDF
       toast({
-        title: "Resume uploaded",
-        description: "Your resume has been uploaded successfully",
+        title: "Extracting resume text",
+        description: "Please wait while we process your resume...",
       });
+
+      const { data: extractData, error: extractError } = await supabase.functions.invoke(
+        'extract_Resumes',
+        { 
+          body: { filePath: fileName } 
+        }
+      );
+
+      if (extractError) {
+        console.error('Error extracting text:', extractError);
+        toast({
+          title: "Resume uploaded",
+          description: "Resume uploaded but text extraction failed. You can try again later.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Resume uploaded and processed",
+          description: `Extracted ${extractData.fullLength} characters of text`,
+        });
+      }
       
       onProfileUpdate();
     } catch (error: any) {

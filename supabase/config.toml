@@ -1,1 +1,4 @@
 project_id = "wbtsvrqeucvjqbebgorr"
+
+[functions.extract_Resumes]
+verify_jwt = true
